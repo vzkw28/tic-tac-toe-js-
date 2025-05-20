@@ -72,3 +72,48 @@ const Game = (function () {
 
   return { playRound, getCurrentPlayer, getWinner };
 })();
+
+const DisplayController = (function () {
+    const gameboardDiv = document.getElementById("gameboard");
+    const message = document.getElementById("message");
+    const restartBtn = document.getElementById("restartBtn");
+
+    const render = () => {
+        gameboardDiv.innerHTML = "";
+        Gameboard.getBoard().forEach((cell, index) => {
+            const cellDiv = document.createElement("div");
+            cellDiv.textContent = cell;
+            cellDiv.dataset.index = index;
+
+            cellDiv.addEventListener("click", () => {
+                if (Game.getWinner() || cell !== "") return;
+                Game.playRound(index);
+                render();
+                updateMessage();
+            });
+
+            gameboardDiv.appendChild(cellDiv);
+        });
+    };
+
+    const updateMessage = () => {
+        if (Game.getWinner()) {
+            message.textContent = `${Game.getWinner()} wins!`;
+        } else if (Gameboard.getBoard().every(c => c !== "")) {
+            message.textContent = "It's a tie!";
+        } else {
+            message.textContent = `${Game.getCurrentPlayer()}'s turn`;
+        }
+    };
+
+    restartBtn.addEventListener("click", () => {
+        Gameboard.resetBoard();
+        message.textContent = "";
+        render();
+    });
+
+    render();
+    updateMessage();
+
+    return { render };
+}) ();
