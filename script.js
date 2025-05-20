@@ -107,9 +107,9 @@ const DisplayController = (function () {
     };
 
     restartBtn.addEventListener("click", () => {
-        Gameboard.resetBoard();
-        message.textContent = "";
+        Game.reset();
         render();
+        updateMessage();
     });
 
     render();
